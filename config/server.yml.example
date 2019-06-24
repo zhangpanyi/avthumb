@@ -1,0 +1,11 @@
+# 主机名
+host: 0.0.0.0
+# 绑定端口
+port: 17912
+# etcd配置(用于服务发现)
+# etcd:
+#   host: 127.0.0.1
+#   port: 8080
+#   server_name: avthumb
+#   server_host: 127.0.0.1
+#   server_port: 17921

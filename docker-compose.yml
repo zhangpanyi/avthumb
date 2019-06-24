@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  avthumb:
+    build:
+      context: .
+    image: avthumb
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 10m
+    tty: true
+    stdin_open: true
+    container_name: avthumb
+    expose:
+      - "17912"
+    ports:
+      - 17912:17912
+    volumes:
+      - .:/avthumb
+    command: /bin/bash

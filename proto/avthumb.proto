@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package avthumb;
+
+// 定义媒体处理服务
+service AVThumb {
+    // Resize 重设图片大小
+    rpc Resize(ResizeRequest) returns (ResizeReply) {}
+    // Constraint 约束图片尺寸
+    rpc Constraint(ConstraintRequest) returns (ConstraintReply) {}
+    // CompressImage 压缩图片质量
+    rpc CompressImage(CompressImageRequest) returns (CompressImageReply) {}
+    // GetVideoPreview 获取视频预览
+    rpc GetVideoPreview(VideoPreviewRequest) returns (VideoPreviewReply) {}
+    // GetAudioPreview 获取音频预览
+    rpc GetAudioPreview(AudioPreviewRequest) returns (AudioPreviewReply) {}
+}
+
+// StatusCode 状态码
+enum StatusCode {
+    StatusCodeOK = 0;   // 操作成功
+    StatusCodeFail = 1; // 操作失败
+}
+
+// ResizeRequest 重设图片大小请求
+message ResizeRequest {
+    bytes data = 1;         // 图片数据
+    uint32 width = 2;       // 图片宽度
+    uint32 height = 3;      // 图片高度
+}
+
+// ResizeReply 重设图片大小响应
+message ResizeReply {
+    StatusCode status = 1;  // 状态码
+    bytes data = 2;         // 图片数据
+}
+
+// ConstraintRequest 约束图片大小请求
+message ConstraintRequest {
+    bytes data = 1;         // 图片数据
+    uint32 max_size = 2;    // 最大尺寸
+    bool output_webp = 3;   // 输出webp格式
+}
+
+// ConstraintReply 约束图片大小响应
+message ConstraintReply {
+    StatusCode status = 1;          // 状态码
+    bytes data = 2;                 // 图片数据
+    uint32 width = 3;               // 图片宽度
+    uint32 height = 4;              // 图片高度
+    uint32 origin_width = 5;        // 图片原始宽度
+    uint32 origin_height = 6;       // 图片原始高度
+}
+
+// CompressImageRequest 压缩图片请求
+message CompressImageRequest {
+    bytes data = 1;         // 图片数据
+    uint32 quality = 2;     // 图片质量(0-100)
+}
+
+// CompressImageReply 压缩图片响应
+message CompressImageReply {
+    StatusCode status = 1;  // 状态码
+    bytes data = 2;         // 图片数据
+}
+
+// VideoPreviewRequest 获取视频预览请求
+message VideoPreviewRequest {
+    bytes data = 1;         // 视频数据
+    uint32 max_size = 2;    // 预览图最大尺寸
+}
+
+// VideoPreviewReply 获取视频预览响应
+message VideoPreviewReply {
+    StatusCode status = 1;  // 状态码
+    uint32 duration = 2;    // 播放时长
+    bytes preview = 3;      // 图片预览
+    uint32 width = 4;       // 预览图宽度
+    uint32 height = 5;      // 预览图高度
+}
+
+// AudioPreviewRequest 获取音频预览请求
+message AudioPreviewRequest {
+    bytes data = 1;         // 音频数据
+    uint32 max_size = 2;    // 封面图最大尺寸
+}
+
+// AudioPreviewReply 获取音频预览响应
+message AudioPreviewReply {
+    StatusCode status = 1;  // 状态码
+    uint32 duration = 2;    // 播放时长
+    bytes cover = 3;        // 封面图片
+    string title = 4;       // 标题
+    string artist = 5;      // 演奏者
+    uint32 width = 6;       // 封面图宽度
+    uint32 height = 7;      // 封面图高度
+}
