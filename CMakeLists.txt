@@ -10,15 +10,13 @@ set(CXX_FLAGS
   -g
   -Wall
   -Wextra
-  -Wconversion
   -Wno-unused-parameter
   -Wold-style-cast
   -Woverloaded-virtual
   -Wpointer-arith
-  -Wshadow
   -Wwrite-strings
   -march=native
-  -std=c++11
+  -std=c++14
 )
 if(CMAKE_BUILD_BITS EQUAL 32)
   list(APPEND CXX_FLAGS "-m32")
@@ -30,6 +28,9 @@ set(CMAKE_CXX_FLAGS_DEBUG "-O0")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -finline-limit=1000 -DNDEBUG")
 
 set(BINARY_OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+
+find_package(OpenCV REQUIRED)
+find_package(Protobuf REQUIRED)
 
 set(GRPC_PROTOCOL_LIBRARY protocol)
 set(GRPC_PROTOCOL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/protocol)

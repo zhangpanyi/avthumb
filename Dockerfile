@@ -31,4 +31,16 @@ RUN apk add --update --no-cache \
     linux-headers \
     yaml-cpp-dev
 
-EXPOSE 17912
+# Copy project
+COPY app /avthumb/app
+COPY proto /avthumb/proto
+COPY protocol /avthumb/protocol
+COPY third_party /avthumb/third_party
+COPY CMakeLists.txt /avthumb/CMakeLists.txt
+
+# Build OpenCV
+RUN cd /avthumb/third_party/opencv \
+    && mkdir build && cd build \
+    && cmake -D CMAKE_BUILD_TYPE=RELEASE -D BUILD_EXAMPLES=NO -D BUILD_ANDROID_EXAMPLES=NO -D INSTALL_PYTHON_EXAMPLES=NO -D BUILD_DOCS=NO .. \
+    && make -j4 && make install \
+    && rm -rf /avthumb/third_party/opencv

@@ -69,7 +69,7 @@ bool AVThumb::Constraint(std::vector<unsigned char> &in_out_buffer, uint32_t max
             return true;
         }
         
-        float scale = (float)max_size / (std::max)(width, height);
+        float scale = static_cast<float>(max_size / (std::max)(width, height));
         width = width * scale;
         height = height * scale;
         cv::resize(mat, dst, cv::Size(width, height));

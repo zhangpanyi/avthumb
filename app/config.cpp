@@ -6,8 +6,8 @@
 
 Config::Config()
     : port_(17912)
-    , etcd_(nullptr)
     , host_("0.0.0.0")
+    , etcd_(nullptr)
 {
 }
 

@@ -1,4 +1,87 @@
 #include "service.h"
+#include "logger.h"
+
+template <typename Request, typename Reply>
+class CallData : public CallDataBase
+{
+public:
+    typedef std::function<
+        void(grpc::ServerContext*,
+            Request*,
+            grpc::ServerAsyncResponseWriter<Reply>*,
+            void*)> Reader;
+
+public:
+    CallData(int tag, Service *service, Reader reader)
+        : tag_(tag)
+        , reader_(reader)
+        , service_(service)
+        , request_(std::make_shared<Request>())
+        , responder_(&ctx_)
+    {
+        proceed();
+    }
+
+public:
+    /**
+     * 逻辑处理
+     */
+    virtual void proceed() override
+    {
+        if (status_ == CallStatus::CREATE)
+        {
+            // 读取操作请求
+            status_ = CallStatus::RECEVICE;
+            reader_(&ctx_, request_.get(), &responder_, this);
+        }
+        else if (status_ == CallStatus::RECEVICE)
+        {
+            // 添加任务到队列
+            logger()->debug("Received request, {}", Request::descriptor()->full_name());
+            service_->make_request(tag_);
+            task_id_ = service_->add_task_to_queue(request_);
+            status_ = CallStatus::PROCESS;
+        }
+        else if (status_ == CallStatus::PROCESS)
+        {
+            // 获取任务处理结果
+            Result result;
+            if (service_->get_task_result(task_id_, &result))
+            {
+                Reply *reply = dynamic_cast<Reply*>(result.message.get());
+                assert(reply != nullptr);
+                if (reply != nullptr)
+                {
+                    responder_.Finish(*reply, grpc::Status::OK, this);
+                    status_ = CallStatus::FINISH;
+                }
+                else
+                {
+                    logger()->error("Wrong return result, {}", Request::descriptor()->full_name());
+                    std::exit(-1);
+                }
+            }
+            else
+            {
+                assert(false);
+                logger()->error("Failed to get task result, {}", Request::descriptor()->full_name());
+            }
+        }
+        else
+        {
+            assert(status_ == CallStatus::FINISH);
+            logger()->debug("Finshed request, {}", Request::descriptor()->full_name());
+        }
+    }
+
+private:
+    int                                     tag_;
+    grpc::ServerContext                     ctx_;
+    Reader                                  reader_;
+    Service*                                service_;
+    std::shared_ptr<Request>                request_;
+    grpc::ServerAsyncResponseWriter<Reply>  responder_;
+};
 
 enum RequestTag
 {
@@ -12,8 +95,8 @@ enum RequestTag
 Service::Service(ThreadPool &pool)
     : qps_(0)
     , tps_(0)
-    , sequeue_(0)
     , repeater_(pool)
+    , sequeue_(0)
     , last_time_(std::chrono::steady_clock::now())
 {
     avthumb::ResizeRequest::default_instance();
@@ -60,7 +143,7 @@ bool Service::get_task_result(uint32_t task_id, Result *out_result)
 // 添加任务到队列
 uint32_t Service::add_task_to_queue(std::shared_ptr<google::protobuf::Message> message)
 {
-    if (sequeue_ = std::numeric_limits<uint32_t>::max())
+    if (sequeue_ == std::numeric_limits<uint32_t>::max())
     {
         sequeue_ = 0;
     }

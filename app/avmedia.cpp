@@ -427,7 +427,7 @@ bool AVMedia::get_video_duration(std::chrono::milliseconds *duration)
         uint64_t val = format_ctx_->duration + 5000;
         uint64_t secs = val / AV_TIME_BASE;
         uint64_t us = val % AV_TIME_BASE;
-        *duration = std::chrono::milliseconds((size_t)(secs * 1000 + ((1000 * us) / AV_TIME_BASE)));
+        *duration =std::chrono::milliseconds(static_cast<long long>(secs * 1000 + ((1000 * us) / AV_TIME_BASE)));
     }
     else if (codec_param->codec_id == AV_CODEC_ID_GIF) // 计算gif动画播放时长
     {
@@ -438,7 +438,7 @@ bool AVMedia::get_video_duration(std::chrono::milliseconds *duration)
         }
 
         int count = st->codec_info_nb_frames;
-        *duration = std::chrono::milliseconds((size_t)(1.0 / av_q2d(st->avg_frame_rate) * 1000 * count));
+        *duration =std::chrono::milliseconds(static_cast<long long>(1.0 / av_q2d(st->avg_frame_rate) * 1000 * count));
     }
     else
     {
@@ -461,7 +461,7 @@ bool AVMedia::get_audio_duration(std::chrono::milliseconds *duration)
         uint64_t val = format_ctx_->duration + 5000;
         uint64_t secs = val / AV_TIME_BASE;
         uint64_t us = val % AV_TIME_BASE;
-        *duration = std::chrono::milliseconds((size_t)(secs * 1000 + ((1000 * us) / AV_TIME_BASE)));
+        *duration = std::chrono::milliseconds(static_cast<long long>(secs * 1000 + ((1000 * us) / AV_TIME_BASE)));
         return true;
     }
     else
