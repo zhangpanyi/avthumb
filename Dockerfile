@@ -1,14 +1,17 @@
 FROM alpine:3.10
 
+RUN echo 'http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories
+
 RUN apk add --update --no-cache \
     bash \
     build-base \
     ca-certificates \
     cmake \
-    freetype-dev \
     ffmpeg-dev \
     ffmpeg-libs \
+    freetype-dev \
     git \
+    grpc-dev \
     lcms2-dev \
     libavc1394-dev \
     libffi-dev \
@@ -26,16 +29,6 @@ RUN apk add --update --no-cache \
     libwebp-dev \
     libressl-dev \
     linux-headers \
-    yaml-cpp-dev \
-    unzip \
-    zlib-dev
-
-# COPY app /avthumb/app
-# COPY proto /avthumb/proto
-# COPY third_party /avthumb/third_party
-# COPY .gitmodules /avthumb/.gitmodules
-# COPY CMakeLists.txt /avthumb/CMakeLists.txt
-
-# RUN rm -rf /avthumb
+    yaml-cpp-dev
 
 EXPOSE 17912

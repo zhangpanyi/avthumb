@@ -34,4 +34,7 @@
 bin
 build
 .vscode
+proto/*.h
+proto/*.cc
+proto/*.cpp
 config/*.yml

@@ -1,4 +1,4 @@
-set(CURRENT_PROJECT_NAME avthumb)
+set(CURRENT_PROJECT_NAME app)
 
 set(CURRENT_PROJECT_SRC_LISTS 
   avmedia.cpp

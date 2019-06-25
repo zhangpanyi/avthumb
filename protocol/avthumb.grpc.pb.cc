@@ -5,14 +5,17 @@
 #include "avthumb.pb.h"
 #include "avthumb.grpc.pb.h"
 
-#include <grpc++/impl/codegen/async_stream.h>
-#include <grpc++/impl/codegen/async_unary_call.h>
-#include <grpc++/impl/codegen/channel_interface.h>
-#include <grpc++/impl/codegen/client_unary_call.h>
-#include <grpc++/impl/codegen/method_handler_impl.h>
-#include <grpc++/impl/codegen/rpc_service_method.h>
-#include <grpc++/impl/codegen/service_type.h>
-#include <grpc++/impl/codegen/sync_stream.h>
+#include <functional>
+#include <grpcpp/impl/codegen/async_stream.h>
+#include <grpcpp/impl/codegen/async_unary_call.h>
+#include <grpcpp/impl/codegen/channel_interface.h>
+#include <grpcpp/impl/codegen/client_unary_call.h>
+#include <grpcpp/impl/codegen/client_callback.h>
+#include <grpcpp/impl/codegen/method_handler_impl.h>
+#include <grpcpp/impl/codegen/rpc_service_method.h>
+#include <grpcpp/impl/codegen/server_callback.h>
+#include <grpcpp/impl/codegen/service_type.h>
+#include <grpcpp/impl/codegen/sync_stream.h>
 namespace avthumb {
 
 static const char* AVThumb_method_names[] = {
@@ -24,83 +27,124 @@ static const char* AVThumb_method_names[] = {
 };
 
 std::unique_ptr< AVThumb::Stub> AVThumb::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
+  (void)options;
   std::unique_ptr< AVThumb::Stub> stub(new AVThumb::Stub(channel));
   return stub;
 }
 
 AVThumb::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
-  : channel_(channel), rpcmethod_Resize_(AVThumb_method_names[0], ::grpc::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_Constraint_(AVThumb_method_names[1], ::grpc::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_CompressImage_(AVThumb_method_names[2], ::grpc::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetVideoPreview_(AVThumb_method_names[3], ::grpc::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetAudioPreview_(AVThumb_method_names[4], ::grpc::RpcMethod::NORMAL_RPC, channel)
+  : channel_(channel), rpcmethod_Resize_(AVThumb_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Constraint_(AVThumb_method_names[1], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_CompressImage_(AVThumb_method_names[2], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetVideoPreview_(AVThumb_method_names[3], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetAudioPreview_(AVThumb_method_names[4], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status AVThumb::Stub::Resize(::grpc::ClientContext* context, const ::avthumb::ResizeRequest& request, ::avthumb::ResizeReply* response) {
-  return ::grpc::BlockingUnaryCall(channel_.get(), rpcmethod_Resize_, context, request, response);
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_Resize_, context, request, response);
+}
+
+void AVThumb::Stub::experimental_async::Resize(::grpc::ClientContext* context, const ::avthumb::ResizeRequest* request, ::avthumb::ResizeReply* response, std::function<void(::grpc::Status)> f) {
+  return ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_Resize_, context, request, response, std::move(f));
 }
 
 ::grpc::ClientAsyncResponseReader< ::avthumb::ResizeReply>* AVThumb::Stub::AsyncResizeRaw(::grpc::ClientContext* context, const ::avthumb::ResizeRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::ClientAsyncResponseReader< ::avthumb::ResizeReply>::Create(channel_.get(), cq, rpcmethod_Resize_, context, request);
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::avthumb::ResizeReply>::Create(channel_.get(), cq, rpcmethod_Resize_, context, request, true);
+}
+
+::grpc::ClientAsyncResponseReader< ::avthumb::ResizeReply>* AVThumb::Stub::PrepareAsyncResizeRaw(::grpc::ClientContext* context, const ::avthumb::ResizeRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::avthumb::ResizeReply>::Create(channel_.get(), cq, rpcmethod_Resize_, context, request, false);
 }
 
 ::grpc::Status AVThumb::Stub::Constraint(::grpc::ClientContext* context, const ::avthumb::ConstraintRequest& request, ::avthumb::ConstraintReply* response) {
-  return ::grpc::BlockingUnaryCall(channel_.get(), rpcmethod_Constraint_, context, request, response);
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_Constraint_, context, request, response);
+}
+
+void AVThumb::Stub::experimental_async::Constraint(::grpc::ClientContext* context, const ::avthumb::ConstraintRequest* request, ::avthumb::ConstraintReply* response, std::function<void(::grpc::Status)> f) {
+  return ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_Constraint_, context, request, response, std::move(f));
 }
 
 ::grpc::ClientAsyncResponseReader< ::avthumb::ConstraintReply>* AVThumb::Stub::AsyncConstraintRaw(::grpc::ClientContext* context, const ::avthumb::ConstraintRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::ClientAsyncResponseReader< ::avthumb::ConstraintReply>::Create(channel_.get(), cq, rpcmethod_Constraint_, context, request);
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::avthumb::ConstraintReply>::Create(channel_.get(), cq, rpcmethod_Constraint_, context, request, true);
+}
+
+::grpc::ClientAsyncResponseReader< ::avthumb::ConstraintReply>* AVThumb::Stub::PrepareAsyncConstraintRaw(::grpc::ClientContext* context, const ::avthumb::ConstraintRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::avthumb::ConstraintReply>::Create(channel_.get(), cq, rpcmethod_Constraint_, context, request, false);
 }
 
 ::grpc::Status AVThumb::Stub::CompressImage(::grpc::ClientContext* context, const ::avthumb::CompressImageRequest& request, ::avthumb::CompressImageReply* response) {
-  return ::grpc::BlockingUnaryCall(channel_.get(), rpcmethod_CompressImage_, context, request, response);
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_CompressImage_, context, request, response);
+}
+
+void AVThumb::Stub::experimental_async::CompressImage(::grpc::ClientContext* context, const ::avthumb::CompressImageRequest* request, ::avthumb::CompressImageReply* response, std::function<void(::grpc::Status)> f) {
+  return ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_CompressImage_, context, request, response, std::move(f));
 }
 
 ::grpc::ClientAsyncResponseReader< ::avthumb::CompressImageReply>* AVThumb::Stub::AsyncCompressImageRaw(::grpc::ClientContext* context, const ::avthumb::CompressImageRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::ClientAsyncResponseReader< ::avthumb::CompressImageReply>::Create(channel_.get(), cq, rpcmethod_CompressImage_, context, request);
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::avthumb::CompressImageReply>::Create(channel_.get(), cq, rpcmethod_CompressImage_, context, request, true);
+}
+
+::grpc::ClientAsyncResponseReader< ::avthumb::CompressImageReply>* AVThumb::Stub::PrepareAsyncCompressImageRaw(::grpc::ClientContext* context, const ::avthumb::CompressImageRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::avthumb::CompressImageReply>::Create(channel_.get(), cq, rpcmethod_CompressImage_, context, request, false);
 }
 
 ::grpc::Status AVThumb::Stub::GetVideoPreview(::grpc::ClientContext* context, const ::avthumb::VideoPreviewRequest& request, ::avthumb::VideoPreviewReply* response) {
-  return ::grpc::BlockingUnaryCall(channel_.get(), rpcmethod_GetVideoPreview_, context, request, response);
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_GetVideoPreview_, context, request, response);
+}
+
+void AVThumb::Stub::experimental_async::GetVideoPreview(::grpc::ClientContext* context, const ::avthumb::VideoPreviewRequest* request, ::avthumb::VideoPreviewReply* response, std::function<void(::grpc::Status)> f) {
+  return ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_GetVideoPreview_, context, request, response, std::move(f));
 }
 
 ::grpc::ClientAsyncResponseReader< ::avthumb::VideoPreviewReply>* AVThumb::Stub::AsyncGetVideoPreviewRaw(::grpc::ClientContext* context, const ::avthumb::VideoPreviewRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::ClientAsyncResponseReader< ::avthumb::VideoPreviewReply>::Create(channel_.get(), cq, rpcmethod_GetVideoPreview_, context, request);
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::avthumb::VideoPreviewReply>::Create(channel_.get(), cq, rpcmethod_GetVideoPreview_, context, request, true);
+}
+
+::grpc::ClientAsyncResponseReader< ::avthumb::VideoPreviewReply>* AVThumb::Stub::PrepareAsyncGetVideoPreviewRaw(::grpc::ClientContext* context, const ::avthumb::VideoPreviewRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::avthumb::VideoPreviewReply>::Create(channel_.get(), cq, rpcmethod_GetVideoPreview_, context, request, false);
 }
 
 ::grpc::Status AVThumb::Stub::GetAudioPreview(::grpc::ClientContext* context, const ::avthumb::AudioPreviewRequest& request, ::avthumb::AudioPreviewReply* response) {
-  return ::grpc::BlockingUnaryCall(channel_.get(), rpcmethod_GetAudioPreview_, context, request, response);
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_GetAudioPreview_, context, request, response);
+}
+
+void AVThumb::Stub::experimental_async::GetAudioPreview(::grpc::ClientContext* context, const ::avthumb::AudioPreviewRequest* request, ::avthumb::AudioPreviewReply* response, std::function<void(::grpc::Status)> f) {
+  return ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_GetAudioPreview_, context, request, response, std::move(f));
 }
 
 ::grpc::ClientAsyncResponseReader< ::avthumb::AudioPreviewReply>* AVThumb::Stub::AsyncGetAudioPreviewRaw(::grpc::ClientContext* context, const ::avthumb::AudioPreviewRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::ClientAsyncResponseReader< ::avthumb::AudioPreviewReply>::Create(channel_.get(), cq, rpcmethod_GetAudioPreview_, context, request);
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::avthumb::AudioPreviewReply>::Create(channel_.get(), cq, rpcmethod_GetAudioPreview_, context, request, true);
+}
+
+::grpc::ClientAsyncResponseReader< ::avthumb::AudioPreviewReply>* AVThumb::Stub::PrepareAsyncGetAudioPreviewRaw(::grpc::ClientContext* context, const ::avthumb::AudioPreviewRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::avthumb::AudioPreviewReply>::Create(channel_.get(), cq, rpcmethod_GetAudioPreview_, context, request, false);
 }
 
 AVThumb::Service::Service() {
-  AddMethod(new ::grpc::RpcServiceMethod(
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
       AVThumb_method_names[0],
-      ::grpc::RpcMethod::NORMAL_RPC,
-      new ::grpc::RpcMethodHandler< AVThumb::Service, ::avthumb::ResizeRequest, ::avthumb::ResizeReply>(
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< AVThumb::Service, ::avthumb::ResizeRequest, ::avthumb::ResizeReply>(
           std::mem_fn(&AVThumb::Service::Resize), this)));
-  AddMethod(new ::grpc::RpcServiceMethod(
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
       AVThumb_method_names[1],
-      ::grpc::RpcMethod::NORMAL_RPC,
-      new ::grpc::RpcMethodHandler< AVThumb::Service, ::avthumb::ConstraintRequest, ::avthumb::ConstraintReply>(
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< AVThumb::Service, ::avthumb::ConstraintRequest, ::avthumb::ConstraintReply>(
           std::mem_fn(&AVThumb::Service::Constraint), this)));
-  AddMethod(new ::grpc::RpcServiceMethod(
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
       AVThumb_method_names[2],
-      ::grpc::RpcMethod::NORMAL_RPC,
-      new ::grpc::RpcMethodHandler< AVThumb::Service, ::avthumb::CompressImageRequest, ::avthumb::CompressImageReply>(
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< AVThumb::Service, ::avthumb::CompressImageRequest, ::avthumb::CompressImageReply>(
           std::mem_fn(&AVThumb::Service::CompressImage), this)));
-  AddMethod(new ::grpc::RpcServiceMethod(
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
       AVThumb_method_names[3],
-      ::grpc::RpcMethod::NORMAL_RPC,
-      new ::grpc::RpcMethodHandler< AVThumb::Service, ::avthumb::VideoPreviewRequest, ::avthumb::VideoPreviewReply>(
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< AVThumb::Service, ::avthumb::VideoPreviewRequest, ::avthumb::VideoPreviewReply>(
           std::mem_fn(&AVThumb::Service::GetVideoPreview), this)));
-  AddMethod(new ::grpc::RpcServiceMethod(
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
       AVThumb_method_names[4],
-      ::grpc::RpcMethod::NORMAL_RPC,
-      new ::grpc::RpcMethodHandler< AVThumb::Service, ::avthumb::AudioPreviewRequest, ::avthumb::AudioPreviewReply>(
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< AVThumb::Service, ::avthumb::AudioPreviewRequest, ::avthumb::AudioPreviewReply>(
           std::mem_fn(&AVThumb::Service::GetAudioPreview), this)));
 }
 

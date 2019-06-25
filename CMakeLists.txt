@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(eddyserver C CXX)
+project(avthumb C CXX)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
@@ -30,10 +30,6 @@ set(CMAKE_CXX_FLAGS_DEBUG "-O0")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -finline-limit=1000 -DNDEBUG")
 
 set(BINARY_OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bin)
-
-find_package(OpenCV REQUIRED)
-
-find_package(Protobuf REQUIRED)
 
 set(GRPC_PROTOCOL_LIBRARY protocol)
 set(GRPC_PROTOCOL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/protocol)

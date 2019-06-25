@@ -6,20 +6,23 @@
 
 #include "avthumb.pb.h"
 
-#include <grpc++/impl/codegen/async_stream.h>
-#include <grpc++/impl/codegen/async_unary_call.h>
-#include <grpc++/impl/codegen/method_handler_impl.h>
-#include <grpc++/impl/codegen/proto_utils.h>
-#include <grpc++/impl/codegen/rpc_method.h>
-#include <grpc++/impl/codegen/service_type.h>
-#include <grpc++/impl/codegen/status.h>
-#include <grpc++/impl/codegen/stub_options.h>
-#include <grpc++/impl/codegen/sync_stream.h>
+#include <functional>
+#include <grpcpp/impl/codegen/async_generic_service.h>
+#include <grpcpp/impl/codegen/async_stream.h>
+#include <grpcpp/impl/codegen/async_unary_call.h>
+#include <grpcpp/impl/codegen/client_callback.h>
+#include <grpcpp/impl/codegen/method_handler_impl.h>
+#include <grpcpp/impl/codegen/proto_utils.h>
+#include <grpcpp/impl/codegen/rpc_method.h>
+#include <grpcpp/impl/codegen/server_callback.h>
+#include <grpcpp/impl/codegen/service_type.h>
+#include <grpcpp/impl/codegen/status.h>
+#include <grpcpp/impl/codegen/stub_options.h>
+#include <grpcpp/impl/codegen/sync_stream.h>
 
 namespace grpc {
 class CompletionQueue;
 class Channel;
-class RpcService;
 class ServerCompletionQueue;
 class ServerContext;
 }  // namespace grpc
@@ -40,32 +43,67 @@ class AVThumb final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::ResizeReply>> AsyncResize(::grpc::ClientContext* context, const ::avthumb::ResizeRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::ResizeReply>>(AsyncResizeRaw(context, request, cq));
     }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::ResizeReply>> PrepareAsyncResize(::grpc::ClientContext* context, const ::avthumb::ResizeRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::ResizeReply>>(PrepareAsyncResizeRaw(context, request, cq));
+    }
     // Constraint 约束图片尺寸
     virtual ::grpc::Status Constraint(::grpc::ClientContext* context, const ::avthumb::ConstraintRequest& request, ::avthumb::ConstraintReply* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::ConstraintReply>> AsyncConstraint(::grpc::ClientContext* context, const ::avthumb::ConstraintRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::ConstraintReply>>(AsyncConstraintRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::ConstraintReply>> PrepareAsyncConstraint(::grpc::ClientContext* context, const ::avthumb::ConstraintRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::ConstraintReply>>(PrepareAsyncConstraintRaw(context, request, cq));
     }
     // CompressImage 压缩图片质量
     virtual ::grpc::Status CompressImage(::grpc::ClientContext* context, const ::avthumb::CompressImageRequest& request, ::avthumb::CompressImageReply* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::CompressImageReply>> AsyncCompressImage(::grpc::ClientContext* context, const ::avthumb::CompressImageRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::CompressImageReply>>(AsyncCompressImageRaw(context, request, cq));
     }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::CompressImageReply>> PrepareAsyncCompressImage(::grpc::ClientContext* context, const ::avthumb::CompressImageRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::CompressImageReply>>(PrepareAsyncCompressImageRaw(context, request, cq));
+    }
     // GetVideoPreview 获取视频预览
     virtual ::grpc::Status GetVideoPreview(::grpc::ClientContext* context, const ::avthumb::VideoPreviewRequest& request, ::avthumb::VideoPreviewReply* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::VideoPreviewReply>> AsyncGetVideoPreview(::grpc::ClientContext* context, const ::avthumb::VideoPreviewRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::VideoPreviewReply>>(AsyncGetVideoPreviewRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::VideoPreviewReply>> PrepareAsyncGetVideoPreview(::grpc::ClientContext* context, const ::avthumb::VideoPreviewRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::VideoPreviewReply>>(PrepareAsyncGetVideoPreviewRaw(context, request, cq));
     }
     // GetAudioPreview 获取音频预览
     virtual ::grpc::Status GetAudioPreview(::grpc::ClientContext* context, const ::avthumb::AudioPreviewRequest& request, ::avthumb::AudioPreviewReply* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::AudioPreviewReply>> AsyncGetAudioPreview(::grpc::ClientContext* context, const ::avthumb::AudioPreviewRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::AudioPreviewReply>>(AsyncGetAudioPreviewRaw(context, request, cq));
     }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::AudioPreviewReply>> PrepareAsyncGetAudioPreview(::grpc::ClientContext* context, const ::avthumb::AudioPreviewRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::AudioPreviewReply>>(PrepareAsyncGetAudioPreviewRaw(context, request, cq));
+    }
+    class experimental_async_interface {
+     public:
+      virtual ~experimental_async_interface() {}
+      // Resize 重设图片大小
+      virtual void Resize(::grpc::ClientContext* context, const ::avthumb::ResizeRequest* request, ::avthumb::ResizeReply* response, std::function<void(::grpc::Status)>) = 0;
+      // Constraint 约束图片尺寸
+      virtual void Constraint(::grpc::ClientContext* context, const ::avthumb::ConstraintRequest* request, ::avthumb::ConstraintReply* response, std::function<void(::grpc::Status)>) = 0;
+      // CompressImage 压缩图片质量
+      virtual void CompressImage(::grpc::ClientContext* context, const ::avthumb::CompressImageRequest* request, ::avthumb::CompressImageReply* response, std::function<void(::grpc::Status)>) = 0;
+      // GetVideoPreview 获取视频预览
+      virtual void GetVideoPreview(::grpc::ClientContext* context, const ::avthumb::VideoPreviewRequest* request, ::avthumb::VideoPreviewReply* response, std::function<void(::grpc::Status)>) = 0;
+      // GetAudioPreview 获取音频预览
+      virtual void GetAudioPreview(::grpc::ClientContext* context, const ::avthumb::AudioPreviewRequest* request, ::avthumb::AudioPreviewReply* response, std::function<void(::grpc::Status)>) = 0;
+    };
+    virtual class experimental_async_interface* experimental_async() { return nullptr; }
   private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::ResizeReply>* AsyncResizeRaw(::grpc::ClientContext* context, const ::avthumb::ResizeRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::ResizeReply>* PrepareAsyncResizeRaw(::grpc::ClientContext* context, const ::avthumb::ResizeRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::ConstraintReply>* AsyncConstraintRaw(::grpc::ClientContext* context, const ::avthumb::ConstraintRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::ConstraintReply>* PrepareAsyncConstraintRaw(::grpc::ClientContext* context, const ::avthumb::ConstraintRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::CompressImageReply>* AsyncCompressImageRaw(::grpc::ClientContext* context, const ::avthumb::CompressImageRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::CompressImageReply>* PrepareAsyncCompressImageRaw(::grpc::ClientContext* context, const ::avthumb::CompressImageRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::VideoPreviewReply>* AsyncGetVideoPreviewRaw(::grpc::ClientContext* context, const ::avthumb::VideoPreviewRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::VideoPreviewReply>* PrepareAsyncGetVideoPreviewRaw(::grpc::ClientContext* context, const ::avthumb::VideoPreviewRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::AudioPreviewReply>* AsyncGetAudioPreviewRaw(::grpc::ClientContext* context, const ::avthumb::AudioPreviewRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::avthumb::AudioPreviewReply>* PrepareAsyncGetAudioPreviewRaw(::grpc::ClientContext* context, const ::avthumb::AudioPreviewRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -74,35 +112,71 @@ class AVThumb final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::ResizeReply>> AsyncResize(::grpc::ClientContext* context, const ::avthumb::ResizeRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::ResizeReply>>(AsyncResizeRaw(context, request, cq));
     }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::ResizeReply>> PrepareAsyncResize(::grpc::ClientContext* context, const ::avthumb::ResizeRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::ResizeReply>>(PrepareAsyncResizeRaw(context, request, cq));
+    }
     ::grpc::Status Constraint(::grpc::ClientContext* context, const ::avthumb::ConstraintRequest& request, ::avthumb::ConstraintReply* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::ConstraintReply>> AsyncConstraint(::grpc::ClientContext* context, const ::avthumb::ConstraintRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::ConstraintReply>>(AsyncConstraintRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::ConstraintReply>> PrepareAsyncConstraint(::grpc::ClientContext* context, const ::avthumb::ConstraintRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::ConstraintReply>>(PrepareAsyncConstraintRaw(context, request, cq));
     }
     ::grpc::Status CompressImage(::grpc::ClientContext* context, const ::avthumb::CompressImageRequest& request, ::avthumb::CompressImageReply* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::CompressImageReply>> AsyncCompressImage(::grpc::ClientContext* context, const ::avthumb::CompressImageRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::CompressImageReply>>(AsyncCompressImageRaw(context, request, cq));
     }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::CompressImageReply>> PrepareAsyncCompressImage(::grpc::ClientContext* context, const ::avthumb::CompressImageRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::CompressImageReply>>(PrepareAsyncCompressImageRaw(context, request, cq));
+    }
     ::grpc::Status GetVideoPreview(::grpc::ClientContext* context, const ::avthumb::VideoPreviewRequest& request, ::avthumb::VideoPreviewReply* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::VideoPreviewReply>> AsyncGetVideoPreview(::grpc::ClientContext* context, const ::avthumb::VideoPreviewRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::VideoPreviewReply>>(AsyncGetVideoPreviewRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::VideoPreviewReply>> PrepareAsyncGetVideoPreview(::grpc::ClientContext* context, const ::avthumb::VideoPreviewRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::VideoPreviewReply>>(PrepareAsyncGetVideoPreviewRaw(context, request, cq));
     }
     ::grpc::Status GetAudioPreview(::grpc::ClientContext* context, const ::avthumb::AudioPreviewRequest& request, ::avthumb::AudioPreviewReply* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::AudioPreviewReply>> AsyncGetAudioPreview(::grpc::ClientContext* context, const ::avthumb::AudioPreviewRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::AudioPreviewReply>>(AsyncGetAudioPreviewRaw(context, request, cq));
     }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::AudioPreviewReply>> PrepareAsyncGetAudioPreview(::grpc::ClientContext* context, const ::avthumb::AudioPreviewRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::avthumb::AudioPreviewReply>>(PrepareAsyncGetAudioPreviewRaw(context, request, cq));
+    }
+    class experimental_async final :
+      public StubInterface::experimental_async_interface {
+     public:
+      void Resize(::grpc::ClientContext* context, const ::avthumb::ResizeRequest* request, ::avthumb::ResizeReply* response, std::function<void(::grpc::Status)>) override;
+      void Constraint(::grpc::ClientContext* context, const ::avthumb::ConstraintRequest* request, ::avthumb::ConstraintReply* response, std::function<void(::grpc::Status)>) override;
+      void CompressImage(::grpc::ClientContext* context, const ::avthumb::CompressImageRequest* request, ::avthumb::CompressImageReply* response, std::function<void(::grpc::Status)>) override;
+      void GetVideoPreview(::grpc::ClientContext* context, const ::avthumb::VideoPreviewRequest* request, ::avthumb::VideoPreviewReply* response, std::function<void(::grpc::Status)>) override;
+      void GetAudioPreview(::grpc::ClientContext* context, const ::avthumb::AudioPreviewRequest* request, ::avthumb::AudioPreviewReply* response, std::function<void(::grpc::Status)>) override;
+     private:
+      friend class Stub;
+      explicit experimental_async(Stub* stub): stub_(stub) { }
+      Stub* stub() { return stub_; }
+      Stub* stub_;
+    };
+    class experimental_async_interface* experimental_async() override { return &async_stub_; }
 
    private:
     std::shared_ptr< ::grpc::ChannelInterface> channel_;
+    class experimental_async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::avthumb::ResizeReply>* AsyncResizeRaw(::grpc::ClientContext* context, const ::avthumb::ResizeRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::avthumb::ResizeReply>* PrepareAsyncResizeRaw(::grpc::ClientContext* context, const ::avthumb::ResizeRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::avthumb::ConstraintReply>* AsyncConstraintRaw(::grpc::ClientContext* context, const ::avthumb::ConstraintRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::avthumb::ConstraintReply>* PrepareAsyncConstraintRaw(::grpc::ClientContext* context, const ::avthumb::ConstraintRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::avthumb::CompressImageReply>* AsyncCompressImageRaw(::grpc::ClientContext* context, const ::avthumb::CompressImageRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::avthumb::CompressImageReply>* PrepareAsyncCompressImageRaw(::grpc::ClientContext* context, const ::avthumb::CompressImageRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::avthumb::VideoPreviewReply>* AsyncGetVideoPreviewRaw(::grpc::ClientContext* context, const ::avthumb::VideoPreviewRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::avthumb::VideoPreviewReply>* PrepareAsyncGetVideoPreviewRaw(::grpc::ClientContext* context, const ::avthumb::VideoPreviewRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::avthumb::AudioPreviewReply>* AsyncGetAudioPreviewRaw(::grpc::ClientContext* context, const ::avthumb::AudioPreviewRequest& request, ::grpc::CompletionQueue* cq) override;
-    const ::grpc::RpcMethod rpcmethod_Resize_;
-    const ::grpc::RpcMethod rpcmethod_Constraint_;
-    const ::grpc::RpcMethod rpcmethod_CompressImage_;
-    const ::grpc::RpcMethod rpcmethod_GetVideoPreview_;
-    const ::grpc::RpcMethod rpcmethod_GetAudioPreview_;
+    ::grpc::ClientAsyncResponseReader< ::avthumb::AudioPreviewReply>* PrepareAsyncGetAudioPreviewRaw(::grpc::ClientContext* context, const ::avthumb::AudioPreviewRequest& request, ::grpc::CompletionQueue* cq) override;
+    const ::grpc::internal::RpcMethod rpcmethod_Resize_;
+    const ::grpc::internal::RpcMethod rpcmethod_Constraint_;
+    const ::grpc::internal::RpcMethod rpcmethod_CompressImage_;
+    const ::grpc::internal::RpcMethod rpcmethod_GetVideoPreview_;
+    const ::grpc::internal::RpcMethod rpcmethod_GetAudioPreview_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -133,7 +207,7 @@ class AVThumb final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Resize(::grpc::ServerContext* context, const ::avthumb::ResizeRequest* request, ::avthumb::ResizeReply* response) final override {
+    ::grpc::Status Resize(::grpc::ServerContext* context, const ::avthumb::ResizeRequest* request, ::avthumb::ResizeReply* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -153,7 +227,7 @@ class AVThumb final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Constraint(::grpc::ServerContext* context, const ::avthumb::ConstraintRequest* request, ::avthumb::ConstraintReply* response) final override {
+    ::grpc::Status Constraint(::grpc::ServerContext* context, const ::avthumb::ConstraintRequest* request, ::avthumb::ConstraintReply* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -173,7 +247,7 @@ class AVThumb final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status CompressImage(::grpc::ServerContext* context, const ::avthumb::CompressImageRequest* request, ::avthumb::CompressImageReply* response) final override {
+    ::grpc::Status CompressImage(::grpc::ServerContext* context, const ::avthumb::CompressImageRequest* request, ::avthumb::CompressImageReply* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -193,7 +267,7 @@ class AVThumb final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetVideoPreview(::grpc::ServerContext* context, const ::avthumb::VideoPreviewRequest* request, ::avthumb::VideoPreviewReply* response) final override {
+    ::grpc::Status GetVideoPreview(::grpc::ServerContext* context, const ::avthumb::VideoPreviewRequest* request, ::avthumb::VideoPreviewReply* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -213,7 +287,7 @@ class AVThumb final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetAudioPreview(::grpc::ServerContext* context, const ::avthumb::AudioPreviewRequest* request, ::avthumb::AudioPreviewReply* response) final override {
+    ::grpc::Status GetAudioPreview(::grpc::ServerContext* context, const ::avthumb::AudioPreviewRequest* request, ::avthumb::AudioPreviewReply* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -222,6 +296,132 @@ class AVThumb final {
     }
   };
   typedef WithAsyncMethod_Resize<WithAsyncMethod_Constraint<WithAsyncMethod_CompressImage<WithAsyncMethod_GetVideoPreview<WithAsyncMethod_GetAudioPreview<Service > > > > > AsyncService;
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_Resize : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithCallbackMethod_Resize() {
+      ::grpc::Service::experimental().MarkMethodCallback(0,
+        new ::grpc::internal::CallbackUnaryHandler< ::avthumb::ResizeRequest, ::avthumb::ResizeReply>(
+          [this](::grpc::ServerContext* context,
+                 const ::avthumb::ResizeRequest* request,
+                 ::avthumb::ResizeReply* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   return this->Resize(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithCallbackMethod_Resize() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Resize(::grpc::ServerContext* context, const ::avthumb::ResizeRequest* request, ::avthumb::ResizeReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void Resize(::grpc::ServerContext* context, const ::avthumb::ResizeRequest* request, ::avthumb::ResizeReply* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_Constraint : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithCallbackMethod_Constraint() {
+      ::grpc::Service::experimental().MarkMethodCallback(1,
+        new ::grpc::internal::CallbackUnaryHandler< ::avthumb::ConstraintRequest, ::avthumb::ConstraintReply>(
+          [this](::grpc::ServerContext* context,
+                 const ::avthumb::ConstraintRequest* request,
+                 ::avthumb::ConstraintReply* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   return this->Constraint(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithCallbackMethod_Constraint() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Constraint(::grpc::ServerContext* context, const ::avthumb::ConstraintRequest* request, ::avthumb::ConstraintReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void Constraint(::grpc::ServerContext* context, const ::avthumb::ConstraintRequest* request, ::avthumb::ConstraintReply* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_CompressImage : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithCallbackMethod_CompressImage() {
+      ::grpc::Service::experimental().MarkMethodCallback(2,
+        new ::grpc::internal::CallbackUnaryHandler< ::avthumb::CompressImageRequest, ::avthumb::CompressImageReply>(
+          [this](::grpc::ServerContext* context,
+                 const ::avthumb::CompressImageRequest* request,
+                 ::avthumb::CompressImageReply* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   return this->CompressImage(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithCallbackMethod_CompressImage() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CompressImage(::grpc::ServerContext* context, const ::avthumb::CompressImageRequest* request, ::avthumb::CompressImageReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void CompressImage(::grpc::ServerContext* context, const ::avthumb::CompressImageRequest* request, ::avthumb::CompressImageReply* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_GetVideoPreview : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithCallbackMethod_GetVideoPreview() {
+      ::grpc::Service::experimental().MarkMethodCallback(3,
+        new ::grpc::internal::CallbackUnaryHandler< ::avthumb::VideoPreviewRequest, ::avthumb::VideoPreviewReply>(
+          [this](::grpc::ServerContext* context,
+                 const ::avthumb::VideoPreviewRequest* request,
+                 ::avthumb::VideoPreviewReply* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   return this->GetVideoPreview(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithCallbackMethod_GetVideoPreview() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetVideoPreview(::grpc::ServerContext* context, const ::avthumb::VideoPreviewRequest* request, ::avthumb::VideoPreviewReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void GetVideoPreview(::grpc::ServerContext* context, const ::avthumb::VideoPreviewRequest* request, ::avthumb::VideoPreviewReply* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_GetAudioPreview : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithCallbackMethod_GetAudioPreview() {
+      ::grpc::Service::experimental().MarkMethodCallback(4,
+        new ::grpc::internal::CallbackUnaryHandler< ::avthumb::AudioPreviewRequest, ::avthumb::AudioPreviewReply>(
+          [this](::grpc::ServerContext* context,
+                 const ::avthumb::AudioPreviewRequest* request,
+                 ::avthumb::AudioPreviewReply* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   return this->GetAudioPreview(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithCallbackMethod_GetAudioPreview() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetAudioPreview(::grpc::ServerContext* context, const ::avthumb::AudioPreviewRequest* request, ::avthumb::AudioPreviewReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void GetAudioPreview(::grpc::ServerContext* context, const ::avthumb::AudioPreviewRequest* request, ::avthumb::AudioPreviewReply* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  typedef ExperimentalWithCallbackMethod_Resize<ExperimentalWithCallbackMethod_Constraint<ExperimentalWithCallbackMethod_CompressImage<ExperimentalWithCallbackMethod_GetVideoPreview<ExperimentalWithCallbackMethod_GetAudioPreview<Service > > > > > ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_Resize : public BaseClass {
    private:
@@ -234,7 +434,7 @@ class AVThumb final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Resize(::grpc::ServerContext* context, const ::avthumb::ResizeRequest* request, ::avthumb::ResizeReply* response) final override {
+    ::grpc::Status Resize(::grpc::ServerContext* context, const ::avthumb::ResizeRequest* request, ::avthumb::ResizeReply* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -251,7 +451,7 @@ class AVThumb final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Constraint(::grpc::ServerContext* context, const ::avthumb::ConstraintRequest* request, ::avthumb::ConstraintReply* response) final override {
+    ::grpc::Status Constraint(::grpc::ServerContext* context, const ::avthumb::ConstraintRequest* request, ::avthumb::ConstraintReply* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -268,7 +468,7 @@ class AVThumb final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status CompressImage(::grpc::ServerContext* context, const ::avthumb::CompressImageRequest* request, ::avthumb::CompressImageReply* response) final override {
+    ::grpc::Status CompressImage(::grpc::ServerContext* context, const ::avthumb::CompressImageRequest* request, ::avthumb::CompressImageReply* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -285,7 +485,7 @@ class AVThumb final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetVideoPreview(::grpc::ServerContext* context, const ::avthumb::VideoPreviewRequest* request, ::avthumb::VideoPreviewReply* response) final override {
+    ::grpc::Status GetVideoPreview(::grpc::ServerContext* context, const ::avthumb::VideoPreviewRequest* request, ::avthumb::VideoPreviewReply* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -302,10 +502,235 @@ class AVThumb final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetAudioPreview(::grpc::ServerContext* context, const ::avthumb::AudioPreviewRequest* request, ::avthumb::AudioPreviewReply* response) final override {
+    ::grpc::Status GetAudioPreview(::grpc::ServerContext* context, const ::avthumb::AudioPreviewRequest* request, ::avthumb::AudioPreviewReply* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
+  };
+  template <class BaseClass>
+  class WithRawMethod_Resize : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithRawMethod_Resize() {
+      ::grpc::Service::MarkMethodRaw(0);
+    }
+    ~WithRawMethod_Resize() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Resize(::grpc::ServerContext* context, const ::avthumb::ResizeRequest* request, ::avthumb::ResizeReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestResize(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_Constraint : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithRawMethod_Constraint() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_Constraint() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Constraint(::grpc::ServerContext* context, const ::avthumb::ConstraintRequest* request, ::avthumb::ConstraintReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestConstraint(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_CompressImage : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithRawMethod_CompressImage() {
+      ::grpc::Service::MarkMethodRaw(2);
+    }
+    ~WithRawMethod_CompressImage() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CompressImage(::grpc::ServerContext* context, const ::avthumb::CompressImageRequest* request, ::avthumb::CompressImageReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestCompressImage(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_GetVideoPreview : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithRawMethod_GetVideoPreview() {
+      ::grpc::Service::MarkMethodRaw(3);
+    }
+    ~WithRawMethod_GetVideoPreview() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetVideoPreview(::grpc::ServerContext* context, const ::avthumb::VideoPreviewRequest* request, ::avthumb::VideoPreviewReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetVideoPreview(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_GetAudioPreview : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithRawMethod_GetAudioPreview() {
+      ::grpc::Service::MarkMethodRaw(4);
+    }
+    ~WithRawMethod_GetAudioPreview() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetAudioPreview(::grpc::ServerContext* context, const ::avthumb::AudioPreviewRequest* request, ::avthumb::AudioPreviewReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetAudioPreview(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_Resize : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithRawCallbackMethod_Resize() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(0,
+        new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this](::grpc::ServerContext* context,
+                 const ::grpc::ByteBuffer* request,
+                 ::grpc::ByteBuffer* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   this->Resize(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithRawCallbackMethod_Resize() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Resize(::grpc::ServerContext* context, const ::avthumb::ResizeRequest* request, ::avthumb::ResizeReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void Resize(::grpc::ServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_Constraint : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithRawCallbackMethod_Constraint() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(1,
+        new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this](::grpc::ServerContext* context,
+                 const ::grpc::ByteBuffer* request,
+                 ::grpc::ByteBuffer* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   this->Constraint(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithRawCallbackMethod_Constraint() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Constraint(::grpc::ServerContext* context, const ::avthumb::ConstraintRequest* request, ::avthumb::ConstraintReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void Constraint(::grpc::ServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_CompressImage : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithRawCallbackMethod_CompressImage() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(2,
+        new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this](::grpc::ServerContext* context,
+                 const ::grpc::ByteBuffer* request,
+                 ::grpc::ByteBuffer* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   this->CompressImage(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithRawCallbackMethod_CompressImage() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CompressImage(::grpc::ServerContext* context, const ::avthumb::CompressImageRequest* request, ::avthumb::CompressImageReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void CompressImage(::grpc::ServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_GetVideoPreview : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithRawCallbackMethod_GetVideoPreview() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(3,
+        new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this](::grpc::ServerContext* context,
+                 const ::grpc::ByteBuffer* request,
+                 ::grpc::ByteBuffer* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   this->GetVideoPreview(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithRawCallbackMethod_GetVideoPreview() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetVideoPreview(::grpc::ServerContext* context, const ::avthumb::VideoPreviewRequest* request, ::avthumb::VideoPreviewReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void GetVideoPreview(::grpc::ServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_GetAudioPreview : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithRawCallbackMethod_GetAudioPreview() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(4,
+        new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this](::grpc::ServerContext* context,
+                 const ::grpc::ByteBuffer* request,
+                 ::grpc::ByteBuffer* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   this->GetAudioPreview(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithRawCallbackMethod_GetAudioPreview() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetAudioPreview(::grpc::ServerContext* context, const ::avthumb::AudioPreviewRequest* request, ::avthumb::AudioPreviewReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void GetAudioPreview(::grpc::ServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_Resize : public BaseClass {
@@ -314,13 +739,13 @@ class AVThumb final {
    public:
     WithStreamedUnaryMethod_Resize() {
       ::grpc::Service::MarkMethodStreamed(0,
-        new ::grpc::StreamedUnaryHandler< ::avthumb::ResizeRequest, ::avthumb::ResizeReply>(std::bind(&WithStreamedUnaryMethod_Resize<BaseClass>::StreamedResize, this, std::placeholders::_1, std::placeholders::_2)));
+        new ::grpc::internal::StreamedUnaryHandler< ::avthumb::ResizeRequest, ::avthumb::ResizeReply>(std::bind(&WithStreamedUnaryMethod_Resize<BaseClass>::StreamedResize, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_Resize() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status Resize(::grpc::ServerContext* context, const ::avthumb::ResizeRequest* request, ::avthumb::ResizeReply* response) final override {
+    ::grpc::Status Resize(::grpc::ServerContext* context, const ::avthumb::ResizeRequest* request, ::avthumb::ResizeReply* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -334,13 +759,13 @@ class AVThumb final {
    public:
     WithStreamedUnaryMethod_Constraint() {
       ::grpc::Service::MarkMethodStreamed(1,
-        new ::grpc::StreamedUnaryHandler< ::avthumb::ConstraintRequest, ::avthumb::ConstraintReply>(std::bind(&WithStreamedUnaryMethod_Constraint<BaseClass>::StreamedConstraint, this, std::placeholders::_1, std::placeholders::_2)));
+        new ::grpc::internal::StreamedUnaryHandler< ::avthumb::ConstraintRequest, ::avthumb::ConstraintReply>(std::bind(&WithStreamedUnaryMethod_Constraint<BaseClass>::StreamedConstraint, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_Constraint() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status Constraint(::grpc::ServerContext* context, const ::avthumb::ConstraintRequest* request, ::avthumb::ConstraintReply* response) final override {
+    ::grpc::Status Constraint(::grpc::ServerContext* context, const ::avthumb::ConstraintRequest* request, ::avthumb::ConstraintReply* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -354,13 +779,13 @@ class AVThumb final {
    public:
     WithStreamedUnaryMethod_CompressImage() {
       ::grpc::Service::MarkMethodStreamed(2,
-        new ::grpc::StreamedUnaryHandler< ::avthumb::CompressImageRequest, ::avthumb::CompressImageReply>(std::bind(&WithStreamedUnaryMethod_CompressImage<BaseClass>::StreamedCompressImage, this, std::placeholders::_1, std::placeholders::_2)));
+        new ::grpc::internal::StreamedUnaryHandler< ::avthumb::CompressImageRequest, ::avthumb::CompressImageReply>(std::bind(&WithStreamedUnaryMethod_CompressImage<BaseClass>::StreamedCompressImage, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_CompressImage() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status CompressImage(::grpc::ServerContext* context, const ::avthumb::CompressImageRequest* request, ::avthumb::CompressImageReply* response) final override {
+    ::grpc::Status CompressImage(::grpc::ServerContext* context, const ::avthumb::CompressImageRequest* request, ::avthumb::CompressImageReply* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -374,13 +799,13 @@ class AVThumb final {
    public:
     WithStreamedUnaryMethod_GetVideoPreview() {
       ::grpc::Service::MarkMethodStreamed(3,
-        new ::grpc::StreamedUnaryHandler< ::avthumb::VideoPreviewRequest, ::avthumb::VideoPreviewReply>(std::bind(&WithStreamedUnaryMethod_GetVideoPreview<BaseClass>::StreamedGetVideoPreview, this, std::placeholders::_1, std::placeholders::_2)));
+        new ::grpc::internal::StreamedUnaryHandler< ::avthumb::VideoPreviewRequest, ::avthumb::VideoPreviewReply>(std::bind(&WithStreamedUnaryMethod_GetVideoPreview<BaseClass>::StreamedGetVideoPreview, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_GetVideoPreview() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status GetVideoPreview(::grpc::ServerContext* context, const ::avthumb::VideoPreviewRequest* request, ::avthumb::VideoPreviewReply* response) final override {
+    ::grpc::Status GetVideoPreview(::grpc::ServerContext* context, const ::avthumb::VideoPreviewRequest* request, ::avthumb::VideoPreviewReply* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -394,13 +819,13 @@ class AVThumb final {
    public:
     WithStreamedUnaryMethod_GetAudioPreview() {
       ::grpc::Service::MarkMethodStreamed(4,
-        new ::grpc::StreamedUnaryHandler< ::avthumb::AudioPreviewRequest, ::avthumb::AudioPreviewReply>(std::bind(&WithStreamedUnaryMethod_GetAudioPreview<BaseClass>::StreamedGetAudioPreview, this, std::placeholders::_1, std::placeholders::_2)));
+        new ::grpc::internal::StreamedUnaryHandler< ::avthumb::AudioPreviewRequest, ::avthumb::AudioPreviewReply>(std::bind(&WithStreamedUnaryMethod_GetAudioPreview<BaseClass>::StreamedGetAudioPreview, this, std::placeholders::_1, std::placeholders::_2)));
     }
     ~WithStreamedUnaryMethod_GetAudioPreview() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status GetAudioPreview(::grpc::ServerContext* context, const ::avthumb::AudioPreviewRequest* request, ::avthumb::AudioPreviewReply* response) final override {
+    ::grpc::Status GetAudioPreview(::grpc::ServerContext* context, const ::avthumb::AudioPreviewRequest* request, ::avthumb::AudioPreviewReply* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
