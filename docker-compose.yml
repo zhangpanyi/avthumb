@@ -18,5 +18,5 @@ services:
     ports:
       - 17912:17912
     volumes:
-      - .:/avthumb
-    command: /bin/bash
+      - ./config/server.yml:/avthumb/config/server.yml
+    command: run

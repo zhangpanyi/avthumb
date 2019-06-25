@@ -2,11 +2,9 @@
 
 #include "logger.h"
 #include "avthumb.h"
-#include "repeater.h"
 
-Worker::Worker(uint32_t task_id, Repeater &repeater)
+Worker::Worker(uint32_t task_id)
     : task_id_(task_id)
-    , repeater_(repeater)
 {
 }
 

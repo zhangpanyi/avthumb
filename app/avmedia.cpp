@@ -26,7 +26,6 @@ static void OnceInitFFMpeg()
 {
     static std::once_flag flag;
     std::call_once(flag, []() {
-        av_register_all();
         av_log_set_level(AV_LOG_ERROR);
     });
 }

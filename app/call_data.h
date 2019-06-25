@@ -1,12 +1,6 @@
 #ifndef __CALL_DATA_H__
 #define __CALL_DATA_H__
 
-#include <memory>
-#include <typeinfo>
-#include <grpc++/grpc++.h>
-#include <avthumb.pb.h>
-#include <avthumb.grpc.pb.h>
-
 class CallDataBase : public std::enable_shared_from_this<CallDataBase>
 {
 public:

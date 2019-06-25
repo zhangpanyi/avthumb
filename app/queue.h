@@ -19,10 +19,10 @@ namespace google
 struct Result;
 class ThreadPool;
 
-class Repeater
+class Queue
 {
 public:
-    explicit Repeater(ThreadPool &pool);
+    explicit Queue(ThreadPool &pool);
 
 public:
     /**
@@ -41,8 +41,8 @@ public:
     void add_task_to_queue(uint32_t task_id, std::shared_ptr<google::protobuf::Message> message);
 
 private:
-    Repeater(const Repeater&) = delete;
-    Repeater& operator= (const Repeater&) = delete;
+    Queue(const Queue&) = delete;
+    Queue& operator= (const Queue&) = delete;
 
 private:
     ThreadPool&                             pool_;

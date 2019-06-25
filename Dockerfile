@@ -29,14 +29,17 @@ RUN apk add --update --no-cache \
     libwebp-dev \
     libressl-dev \
     linux-headers \
+    python \
     yaml-cpp-dev
 
 # Copy project
 COPY app /avthumb/app
 COPY proto /avthumb/proto
 COPY protocol /avthumb/protocol
+COPY server.py /avthumb/server.py
 COPY third_party /avthumb/third_party
 COPY CMakeLists.txt /avthumb/CMakeLists.txt
+RUN chmod +x /avthumb/server.py
 
 # Build OpenCV
 RUN cd /avthumb/third_party/opencv \
@@ -44,3 +47,17 @@ RUN cd /avthumb/third_party/opencv \
     && cmake -D CMAKE_BUILD_TYPE=RELEASE -D BUILD_EXAMPLES=NO -D BUILD_ANDROID_EXAMPLES=NO -D INSTALL_PYTHON_EXAMPLES=NO -D BUILD_DOCS=NO .. \
     && make -j4 && make install \
     && rm -rf /avthumb/third_party/opencv
+
+# Build project
+RUN cd /avthumb \
+    && mkdir build && cd build \
+    && cmake .. && make -j4 \
+    && rm -rf /avthumb/build
+
+EXPOSE 17912
+
+WORKDIR /avthumb/bin
+
+VOLUME [ "/avthumb/config" ]
+
+ENTRYPOINT [ "/avthumb/server.py" ]

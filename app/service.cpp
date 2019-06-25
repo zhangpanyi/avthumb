@@ -95,7 +95,7 @@ enum RequestTag
 Service::Service(ThreadPool &pool)
     : qps_(0)
     , tps_(0)
-    , repeater_(pool)
+    , queue_(pool)
     , sequeue_(0)
     , last_time_(std::chrono::steady_clock::now())
 {
@@ -113,9 +113,9 @@ Service::~Service()
         server_->Shutdown();
     }
 
-    if (queue_ != nullptr)
+    if (co_queue_ != nullptr)
     {
-        queue_->Shutdown();
+        co_queue_->Shutdown();
     }
 }
 
@@ -127,7 +127,7 @@ void Service::run(const std::string &addr, uint16_t port)
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
     builder.RegisterService(&service_);
 
-    queue_ = builder.AddCompletionQueue();
+    co_queue_ = builder.AddCompletionQueue();
     server_ = builder.BuildAndStart();
     logger()->info("Server listening on {}", server_address);
 
@@ -137,7 +137,7 @@ void Service::run(const std::string &addr, uint16_t port)
 // 获取任务结果
 bool Service::get_task_result(uint32_t task_id, Result *out_result)
 {
-    return repeater_.get_task_result(task_id, out_result);
+    return queue_.get_task_result(task_id, out_result);
 }
 
 // 添加任务到队列
@@ -148,7 +148,7 @@ uint32_t Service::add_task_to_queue(std::shared_ptr<google::protobuf::Message> m
         sequeue_ = 0;
     }
     uint32_t id = ++sequeue_;
-    repeater_.add_task_to_queue(id, message);
+    queue_.add_task_to_queue(id, message);
     return id;
 }
 
@@ -181,7 +181,7 @@ void Service::make_resize_request()
     typedef avthumb::ResizeReply ResType;
     typedef avthumb::ResizeRequest ReqType;
     auto handle_read = [&](grpc::ServerContext *ctx, ReqType *req, grpc::ServerAsyncResponseWriter<ResType> *reply, void *tag) {
-        service_.RequestResize(ctx, req, reply, queue_.get(), queue_.get(), tag);
+        service_.RequestResize(ctx, req, reply, co_queue_.get(), co_queue_.get(), tag);
     };
     auto request = std::make_shared<CallData<ReqType, ResType>>(ResizeRequestTag, this, handle_read);
     requests_.push_back(request);
@@ -193,7 +193,7 @@ void Service::make_constraint_request()
     typedef avthumb::ConstraintReply ResType;
     typedef avthumb::ConstraintRequest ReqType;
     auto handle_read = [&](grpc::ServerContext *ctx, ReqType *req, grpc::ServerAsyncResponseWriter<ResType> *reply, void *tag) {
-        service_.RequestConstraint(ctx, req, reply, queue_.get(), queue_.get(), tag);
+        service_.RequestConstraint(ctx, req, reply, co_queue_.get(), co_queue_.get(), tag);
     };
     auto request = std::make_shared<CallData<ReqType, ResType>>(ConstraintRequestTag, this, handle_read);
     requests_.push_back(request);
@@ -205,7 +205,7 @@ void Service::make_compress_request()
     typedef avthumb::CompressImageReply ResType;
     typedef avthumb::CompressImageRequest ReqType;
     auto handle_read = [&](grpc::ServerContext *ctx, ReqType *req, grpc::ServerAsyncResponseWriter<ResType> *reply, void *tag) {
-        service_.RequestCompressImage(ctx, req, reply, queue_.get(), queue_.get(), tag);
+        service_.RequestCompressImage(ctx, req, reply, co_queue_.get(), co_queue_.get(), tag);
     };
     auto request = std::make_shared<CallData<ReqType, ResType>>(CompressRequestTag, this, handle_read);
     requests_.push_back(request);
@@ -217,7 +217,7 @@ void Service::make_viewpreview_request()
     typedef avthumb::VideoPreviewReply ResType;
     typedef avthumb::VideoPreviewRequest ReqType;
     auto handle_read = [&](grpc::ServerContext *ctx, ReqType *req, grpc::ServerAsyncResponseWriter<ResType> *reply, void *tag) {
-        service_.RequestGetVideoPreview(ctx, req, reply, queue_.get(), queue_.get(), tag);
+        service_.RequestGetVideoPreview(ctx, req, reply, co_queue_.get(), co_queue_.get(), tag);
     };
     auto request = std::make_shared<CallData<ReqType, ResType>>(VideoPreviewRequestTag, this, handle_read);
     requests_.push_back(request);
@@ -229,7 +229,7 @@ void Service::make_audiopreview_request()
     typedef avthumb::AudioPreviewReply ResType;
     typedef avthumb::AudioPreviewRequest ReqType;
     auto handle_read = [&](grpc::ServerContext *ctx, ReqType *req, grpc::ServerAsyncResponseWriter<ResType> *reply, void *tag) {
-        service_.RequestGetAudioPreview(ctx, req, reply, queue_.get(), queue_.get(), tag);
+        service_.RequestGetAudioPreview(ctx, req, reply, co_queue_.get(), co_queue_.get(), tag);
     };
     auto request = std::make_shared<CallData<ReqType, ResType>>(AudioPreviewRequestTag, this, handle_read);
     requests_.push_back(request);
@@ -256,11 +256,11 @@ void Service::loop()
         bool ok = false;
         void *tag = nullptr;
         gpr_timespec deadline{ 0, 0, GPR_TIMESPAN };
-        auto next_status = queue_->AsyncNext(&tag, &ok, deadline);
+        auto next_status = co_queue_->AsyncNext(&tag, &ok, deadline);
         assert(next_status != grpc::CompletionQueue::SHUTDOWN);
 
         // 事件循环
-        auto completed_set = repeater_.get_completed();
+        auto completed_set = queue_.get_completed();
         for (size_t i = 0; i < requests_.size();)
         {
             if (next_status == grpc::CompletionQueue::GOT_EVENT && tag == requests_[i].get())

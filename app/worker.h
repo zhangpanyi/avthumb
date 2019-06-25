@@ -3,7 +3,7 @@
 
 #include <avthumb.pb.h>
 
-class Repeater;
+class Queue;
 
 struct Result
 {
@@ -14,7 +14,7 @@ struct Result
 class Worker
 {
 public:
-    explicit Worker(uint32_t task_id, Repeater &repeater);
+    explicit Worker(uint32_t task_id);
 
     /**
      * 重载函数对象
@@ -53,7 +53,6 @@ private:
 
 private:
     uint32_t    task_id_;
-    Repeater&   repeater_;
 };
 
 #endif

@@ -6,9 +6,11 @@
 #include <string>
 #include <cstdint>
 #include <unordered_map>
+#include <grpc++/grpc++.h>
+#include <avthumb.grpc.pb.h>
 #include <google/protobuf/message.h>
 
-#include "repeater.h"
+#include "queue.h"
 #include "call_data.h"
 
 class Service
@@ -79,10 +81,10 @@ private:
 private:
     uint32_t                                     qps_;
     uint32_t                                     tps_;
-    Repeater                                     repeater_;
+    Queue                                        queue_;
     uint32_t                                     sequeue_;
     avthumb::AVThumb::AsyncService               service_;
-    std::unique_ptr<grpc::ServerCompletionQueue> queue_;
+    std::unique_ptr<grpc::ServerCompletionQueue> co_queue_;
     std::unique_ptr<grpc::Server>                server_;
     std::vector<std::shared_ptr<CallDataBase>>   requests_;
     std::chrono::steady_clock::time_point        last_time_;

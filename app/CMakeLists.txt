@@ -7,7 +7,7 @@ set(CURRENT_PROJECT_SRC_LISTS
   etcd_client_v3.cpp
   logger.cpp
   main.cpp
-  repeater.cpp
+  queue.cpp
   service.cpp
   thread_pool.cpp
   worker.cpp
