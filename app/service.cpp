@@ -125,7 +125,7 @@ void Service::run(const std::string &addr, uint16_t port)
     grpc::ServerBuilder builder;
     std::string server_address = addr + ":" + std::to_string(port);
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
-    builder.RegisterService(&service_);
+    builder.RegisterAsyncService(&service_);
 
     co_queue_ = builder.AddCompletionQueue();
     server_ = builder.BuildAndStart();
